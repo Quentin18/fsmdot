@@ -119,7 +119,10 @@ class fsm(ABC):
         print(self.tabulate())
 
     def delta(self, state, symbol):
-        """State-transition function."""
+        """
+        State-transition function.
+        It returns the next state from a state and a symbol.
+        """
         i = self._get_state_index(state)
         j = self._get_symbol_index(symbol)
         return self._table[i][j]
