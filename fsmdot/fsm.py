@@ -69,10 +69,14 @@ class fsm(ABC):
 
     def _get_state_index(self, state):
         """Returns the index of a state in the list."""
+        if state not in self._states:
+            raise fsmError('%s is not a state' % state)
         return self._states.index(state)
 
     def _get_symbol_index(self, symbol):
         """Returns the index of a symbol in the list."""
+        if symbol not in self._symbols:
+            raise fsmError('%s is not a symbol' % symbol)
         return self._symbols.index(symbol)
 
     def tabulate(self, tablefmt='grid'):
