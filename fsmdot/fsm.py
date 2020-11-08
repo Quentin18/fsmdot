@@ -75,29 +75,44 @@ class fsm(ABC):
         """Returns the index of a symbol in the list."""
         return self._symbols.index(symbol)
 
+    def tabulate(self, tablefmt='grid'):
+        """
+        Returns the state-transition table formated with the
+        tabulate library.
+
+        - The initial state is indicated with an arrow: ->
+        - The accept states are indicated with a star: *
+
+        You can choose the table format with the tablefmt argument
+        (default: 'grid').
+
+        See: https://github.com/astanin/python-tabulate
+        """
+        states = []
+        for s in self._states:
+            state = str(s)
+            if s in self._final_states:
+                state = '* ' + state
+            if s == self._initial_state:
+                state = '-> ' + state
+            states.append(state)
+        return tabulate(
+            self._table,
+            headers=self._symbols,
+            tablefmt=tablefmt,
+            showindex=states,
+            stralign='right'
+        )
+
     def print_table(self):
         """
         Prints the state-transition table.
+        It uses the tabulate library.
 
         - The initial state is indicated with an arrow: ->
         - The accept states are indicated with a star: *
         """
-        states = []
-        for s in self._states:
-            if s == self._initial_state:
-                states.append('-> ' + str(s))
-            elif s in self._final_states:
-                states.append('* ' + str(s))
-            else:
-                states.append(str(s))
-        print(tabulate(
-            self._table,
-            headers=self._symbols,
-            tablefmt='grid',
-            showindex=states,
-            stralign='right'
-            )
-        )
+        print(self.tabulate())
 
     def delta(self, state, symbol):
         """State-transition function."""
