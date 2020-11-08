@@ -84,7 +84,14 @@ class nfa(fsm):
         return dfa(states, symbols, table, initial_state, final_states)
 
     def dot_graph(self):
-        """Returns the dot graph representing the NFA."""
+        """
+        Returns the dot graph representing the NFA.
+
+        It uses the pygraphviz library. The method returns an AGraph.
+        You can use the write method to write the dot graph to a file.
+
+        See: https://pygraphviz.github.io/
+        """
         # Init graph
         G = pgv.AGraph(
             name='NFA', strict=True, directed=True
