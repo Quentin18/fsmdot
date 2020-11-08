@@ -2,14 +2,14 @@
 
 **fsmdot** is a Python package to create finite-state machines which can be exported to dot. It uses the [pygraphviz](https://pygraphviz.github.io/) library which is a Python interface to the [Graphviz](https://graphviz.org/) graph layout and visualization package.
 
-# Installing
+## Installing
 - First, you need to install Graphviz. See how to download it [here](https://graphviz.org/download/).
 - Then, *fsmdot* can be installed using [pip](https://pip.pypa.io/en/stable/):
 ```
 pip3 install fsmdot
 ```
 
-# Usage
+## Usage
 With the *fsmdot* library, you can create two different types of finite-state machine:
 - **Deterministic finite automaton** (DFA)
 - **Nondeterministic finite automaton** (NFA)
@@ -24,7 +24,7 @@ A finite-state machine is represented by a quintuple (Q, S, T, q0, F) where:
 The order of states and symbols is important in Q and S
 to make the state-transition table.
 
-## Deterministic finite automaton
+### Deterministic finite automaton
 Example:
 ```python
 from fsmdot.dfa import dfa
@@ -49,7 +49,7 @@ print(G.to_string())
 G.write('dfa.dot')
 ```
 
-## Nondeterministic finite automaton
+### Nondeterministic finite automaton
 Example:
 ```python
 from fsmdot.nfa import nfa
@@ -76,7 +76,7 @@ print(G.to_string())
 G.write('nfa.dot')
 ```
 
-# References
+## References
 - [Automata theory](https://en.wikipedia.org/wiki/Automata_theory)
 - [Finite-state machines](https://en.wikipedia.org/wiki/Finite-state_machine)
 - [Deterministic finite automaton](https://en.wikipedia.org/wiki/Deterministic_finite_automaton)
@@ -84,8 +84,8 @@ G.write('nfa.dot')
 - [Powerset construction](https://en.wikipedia.org/wiki/Powerset_construction)
 - [DFA minimization](https://en.wikipedia.org/wiki/DFA_minimization)
 
-# Author
+## Author
 [Quentin Deschamps](mailto:quentindeschamps18@gmail.com)
 
-# License
+## License
 [MIT](https://choosealicense.com/licenses/mit/)
