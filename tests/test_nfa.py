@@ -46,7 +46,7 @@ def test_delta(a1, a2):
     assert a2.delta('S0', '0') == {}
     assert a2.delta('S0', '1') == {}
     assert a2.delta('S0', nfa.EPSILON) == {'S1', 'S3'}
-    assert a2.delta('S1', '0') ==  {'S2'}
+    assert a2.delta('S1', '0') == {'S2'}
     assert a2.delta('S1', '1') == {'S1'}
     assert a2.delta('S1', nfa.EPSILON) == {}
     assert a2.delta('S2', '0') == {'S1'}
@@ -68,3 +68,9 @@ def test_accept(a1, a2):
     # assert a2.accept('10101')
     assert not a2.accept('10')
     assert not a2.accept('01')
+
+
+def test_epsilon_closure(a2):
+    assert a2.epsilon_closure('S0') == {'S0', 'S1', 'S3'}
+    for state in ['S1', 'S2', 'S3', 'S4']:
+        assert a2.epsilon_closure(state) == {state}
