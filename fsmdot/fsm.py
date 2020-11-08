@@ -44,28 +44,35 @@ class fsm(ABC):
 
     @property
     def states(self):
+        """Returns the list of states."""
         return self._states
 
     @property
     def symbols(self):
+        """Returns the input alphabet."""
         return self._symbols
 
     @property
     def table(self):
+        """Returns the state-transition table."""
         return self._table
 
     @property
     def initial_state(self):
+        """Returns the initial state."""
         return self._initial_state
 
     @property
     def final_states(self):
+        """Returns the accept states."""
         return self._final_states
 
     def _get_state_index(self, state):
+        """Returns the index of a state in the list."""
         return self._states.index(state)
 
     def _get_symbol_index(self, symbol):
+        """Returns the index of a symbol in the list."""
         return self._symbols.index(symbol)
 
     def print_table(self):
