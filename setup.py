@@ -3,6 +3,8 @@
     pip3 install .
 * Install with setuptools:
     python3 setup.py install
+* Run tests:
+    python3 setup.py pytest
 """
 import setuptools
 
@@ -43,4 +45,6 @@ setuptools.setup(
     zip_safe=True,
     install_requires=['pygraphviz', 'tabulate'],
     python_requires='>=3.6',
+    setup_requires=['pytest-runner'],
+    tests_require='pytest'
 )
