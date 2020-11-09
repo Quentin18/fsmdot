@@ -37,27 +37,21 @@ class nfa(fsm):
 
     def accept(self, string):
         """Returns True if the string is accepted by the NFA."""
-        epsilon_nfa = self.has_epsilon_moves()
-        if epsilon_nfa:
-            current_states = self.epsilon_closure(self._initial_state)
-        else:
-            current_states = {self._initial_state}
+        current_states = self.epsilon_closure(self._initial_state)
         for symbol in string:
             new_states = set()
             for state in current_states:
                 t = self.delta(state, symbol)
-                if epsilon_nfa:
-                    for s in t:
-                        new_states.update(self.epsilon_closure(s))
-                else:
-                    new_states.update(t)
+                for s in t:
+                    new_states.update(self.epsilon_closure(s))
             current_states = new_states
         return bool(current_states.intersection(self._final_states))
 
     def epsilon_closure(self, state):
         """Returns the epsilon closure of a state."""
         c = {state}
-        self._recursive_closure(state, c)
+        if self.has_epsilon_moves():
+            self._recursive_closure(state, c)
         return c
 
     def _recursive_closure(self, state, c):
@@ -66,9 +60,16 @@ class nfa(fsm):
             self._recursive_closure(s, c)
 
     def to_dfa(self):
-        """Returns the DFA corresponding to the NFA."""
+        """
+        Returns the DFA corresponding to the NFA.
+
+        It uses the powerset construction.
+
+        See: https://en.wikipedia.org/wiki/Powerset_construction
+        """
         symbols = self._symbols.copy()
-        symbols.remove(nfa.EPSILON)
+        if self.has_epsilon_moves():
+            symbols.remove(nfa.EPSILON)
         states = []
         table = []
         final_states = set()
