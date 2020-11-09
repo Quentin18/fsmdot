@@ -37,6 +37,37 @@ def a2():
     return nfa(Q, S, T, q0, F)
 
 
+@pytest.fixture
+def a3():
+    Q = [1, 2, 3, 4]
+    S = [nfa.EPSILON, '0', '1']
+    T = [
+        [{3}, {2}, {}],
+        [{}, {}, {2, 4}],
+        [{2}, {4}, {}],
+        [{}, {3}, {}]
+    ]
+    q0 = 1
+    F = {3, 4}
+    return nfa(Q, S, T, q0, F)
+
+
+@pytest.fixture
+def a4():
+    Q = ['X', '0', '1', '2', '3']
+    S = ['0', '1']
+    T = [
+        [{'X'}, {'X', '0'}],
+        [{'1'}, {'1'}],
+        [{'2'}, {'2'}],
+        [{'3'}, {'3'}],
+        [{}, {}]
+    ]
+    q0 = 'X'
+    F = {'3'}
+    return nfa(Q, S, T, q0, F)
+
+
 def test_has_epsilon_moves(a1, a2):
     assert not a1.has_epsilon_moves()
     assert a2.has_epsilon_moves()
@@ -79,3 +110,12 @@ def test_epsilon_closure(a2):
     assert a2.epsilon_closure('S0') == {'S0', 'S1', 'S3'}
     for state in ['S1', 'S2', 'S3', 'S4']:
         assert a2.epsilon_closure(state) == {state}
+
+
+def test_to_dfa(a3, a4):
+    dfa3 = a3.to_dfa()
+    dfa4 = a4.to_dfa()
+    assert dfa3.symbols == ['0', '1']
+    assert len(dfa3.states) == 4
+    assert dfa4.symbols == ['0', '1']
+    assert len(dfa4.states) == 16
