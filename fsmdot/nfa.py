@@ -9,10 +9,10 @@ Date: 2020
 import pygraphviz as pgv
 
 from fsmdot.fsm import Fsm
-from fsmdot.dfa import dfa
+from fsmdot.dfa import Dfa
 
 
-class nfa(Fsm):
+class Nfa(Fsm):
     """
     Represents a nondeterministic finite automaton (NFA).
 
@@ -25,7 +25,7 @@ class nfa(Fsm):
     The order of states and symbols is important in Q and S
     to make the state-transition table.
 
-    You can add epsilon-moves using the nfa.EPSILON character in S.
+    You can add epsilon-moves using the Nfa.EPSILON character in S.
 
     See: https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton
     """
@@ -33,7 +33,7 @@ class nfa(Fsm):
 
     def has_epsilon_moves(self):
         """Returns True if the NFA has epsilon-moves."""
-        return nfa.EPSILON in self._symbols
+        return Nfa.EPSILON in self._symbols
 
     def accept(self, string):
         """Returns True if the string is accepted by the NFA."""
@@ -56,7 +56,7 @@ class nfa(Fsm):
 
     def _recursive_closure(self, state, c):
         c.add(state)
-        for s in self.delta(state, nfa.EPSILON):
+        for s in self.delta(state, Nfa.EPSILON):
             self._recursive_closure(s, c)
 
     def to_dfa(self):
@@ -69,7 +69,7 @@ class nfa(Fsm):
         """
         symbols = self._symbols.copy()
         if self.has_epsilon_moves():
-            symbols.remove(nfa.EPSILON)
+            symbols.remove(Nfa.EPSILON)
         states = []
         table = []
         final_states = set()
@@ -94,7 +94,7 @@ class nfa(Fsm):
                     line.append(None)
             table.append(line)
 
-        return dfa(states, symbols, table, initial_state, final_states)
+        return Dfa(states, symbols, table, initial_state, final_states)
 
     def dot_graph(self):
         """

@@ -13,7 +13,7 @@ from fsmdot.fsm import Fsm
 from fsmdot.error import FsmError
 
 
-class dfa(Fsm):
+class Dfa(Fsm):
     """
     Represents a deterministic finite automaton (DFA).
 

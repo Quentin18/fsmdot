@@ -1,11 +1,11 @@
 """
-Tests for the dfa class.
+Tests for the Dfa class.
 
 Automatons are inspired by Wikipedia:
 https://en.wikipedia.org/wiki/Deterministic_finite_automaton
 """
 import pytest
-from fsmdot.dfa import dfa
+from fsmdot.dfa import Dfa
 from fsmdot.error import FsmError
 
 
@@ -19,7 +19,7 @@ def a1():
     ]
     q0 = 'S1'
     F = {'S1'}
-    return dfa(Q, S, T, q0, F)
+    return Dfa(Q, S, T, q0, F)
 
 
 @pytest.fixture
@@ -33,7 +33,7 @@ def a2():
     ]
     q0 = 'S0'
     F = {'S0'}
-    return dfa(Q, S, T, q0, F)
+    return Dfa(Q, S, T, q0, F)
 
 
 def test_init_1():
@@ -47,7 +47,7 @@ def test_init_1():
         ]
         q0 = 'S0'
         F = {'S0'}
-        dfa(Q, S, T, q0, F)
+        Dfa(Q, S, T, q0, F)
 
 
 def test_init_2():
@@ -61,7 +61,7 @@ def test_init_2():
         ]
         q0 = 'S0'
         F = {'S0'}
-        dfa(Q, S, T, q0, F)
+        Dfa(Q, S, T, q0, F)
 
 
 def test_init_3():
@@ -75,7 +75,7 @@ def test_init_3():
         ]
         q0 = 'S3'   # Q does not contain q0
         F = {'S0'}
-        dfa(Q, S, T, q0, F)
+        Dfa(Q, S, T, q0, F)
 
 
 def test_init_4():
@@ -89,7 +89,7 @@ def test_init_4():
         ]
         q0 = 'S0'
         F = {'S0', 'S3'}    # Q does not contain all states of F
-        dfa(Q, S, T, q0, F)
+        Dfa(Q, S, T, q0, F)
 
 
 def test_init_5():
@@ -104,7 +104,7 @@ def test_init_5():
         ]   # The state-transition table is not deterministic
         q0 = 0
         F = {3}
-        dfa(Q, S, T, q0, F)
+        Dfa(Q, S, T, q0, F)
 
 
 def test_delta(a1, a2):
