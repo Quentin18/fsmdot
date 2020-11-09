@@ -8,11 +8,11 @@ Date: 2020
 """
 import pygraphviz as pgv
 
-from fsmdot.fsm import fsm
+from fsmdot.fsm import Fsm
 from fsmdot.dfa import dfa
 
 
-class nfa(fsm):
+class nfa(Fsm):
     """
     Represents a nondeterministic finite automaton (NFA).
 

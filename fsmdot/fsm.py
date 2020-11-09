@@ -12,7 +12,7 @@ from tabulate import tabulate
 from fsmdot.error import FsmError
 
 
-class fsm(ABC):
+class Fsm(ABC):
     """Represents a finite-state machine.
 
     - Q is a list of states

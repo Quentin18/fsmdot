@@ -9,11 +9,11 @@ Date: 2020
 from collections.abc import Iterable
 import pygraphviz as pgv
 
-from fsmdot.fsm import fsm
+from fsmdot.fsm import Fsm
 from fsmdot.error import FsmError
 
 
-class dfa(fsm):
+class dfa(Fsm):
     """
     Represents a deterministic finite automaton (DFA).
 
