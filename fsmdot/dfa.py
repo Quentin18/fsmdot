@@ -84,6 +84,23 @@ class dfa(fsm):
 
         return G
 
+    def unreachable_states(self):
+        """
+        Returns the set of unreachable states of the DFA.
+
+        See: https://en.wikipedia.org/wiki/DFA_minimization#Unreachable_states
+        """
+        reachable_states = {self._initial_state}
+        new_states = {self._initial_state}
+        while new_states:
+            temp = set()
+            for state in new_states:
+                for symbol in self._symbols:
+                    temp.add(self.delta(state, symbol))
+            new_states = temp.difference(reachable_states)
+            reachable_states.update(new_states)
+        return set(self._states).difference(reachable_states)
+
     def minimize(self):
         """
         Transforms a DFA into an equivalent DFA that has a minimum number

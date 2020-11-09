@@ -130,3 +130,8 @@ def test_accept(a1, a2):
     assert a2.accept('11100010100')
     assert not a2.accept('101')
     assert not a2.accept('1110')
+
+
+def test_unreachable_states(a1, a2):
+    assert not a1.unreachable_states()
+    assert not a2.unreachable_states()
