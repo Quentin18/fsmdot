@@ -9,7 +9,7 @@ Date: 2020
 from abc import ABC
 from tabulate import tabulate
 
-from fsmdot.error import fsmError
+from fsmdot.error import FsmError
 
 
 class fsm(ABC):
@@ -28,14 +28,14 @@ class fsm(ABC):
     """
     def __init__(self, Q, S, T, q0, F):
         if not isinstance(Q, list):
-            raise fsmError('Q must be a list')
+            raise FsmError('Q must be a list')
         if not isinstance(S, list):
-            raise fsmError('S must be a list')
+            raise FsmError('S must be a list')
         if q0 not in Q:
-            raise fsmError('Q does not contain q0')
+            raise FsmError('Q does not contain q0')
         F = set(F)
         if F.intersection(Q) != F:
-            raise fsmError('Q does not contain all states of F')
+            raise FsmError('Q does not contain all states of F')
         self._states = Q
         self._symbols = S
         self._table = T
@@ -70,13 +70,13 @@ class fsm(ABC):
     def _get_state_index(self, state):
         """Returns the index of a state in the list."""
         if state not in self._states:
-            raise fsmError('%s is not a state' % state)
+            raise FsmError('%s is not a state' % state)
         return self._states.index(state)
 
     def _get_symbol_index(self, symbol):
         """Returns the index of a symbol in the list."""
         if symbol not in self._symbols:
-            raise fsmError('%s is not a symbol' % symbol)
+            raise FsmError('%s is not a symbol' % symbol)
         return self._symbols.index(symbol)
 
     def tabulate(self, tablefmt='grid'):

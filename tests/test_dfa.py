@@ -6,7 +6,7 @@ https://en.wikipedia.org/wiki/Deterministic_finite_automaton
 """
 import pytest
 from fsmdot.dfa import dfa
-from fsmdot.error import fsmError
+from fsmdot.error import FsmError
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ def a2():
 
 
 def test_init_1():
-    with pytest.raises(fsmError):
+    with pytest.raises(FsmError):
         Q = {'S0', 'S1', 'S2'}  # Q must be a list
         S = ['0', '1']
         T = [
@@ -51,7 +51,7 @@ def test_init_1():
 
 
 def test_init_2():
-    with pytest.raises(fsmError):
+    with pytest.raises(FsmError):
         Q = ['S0', 'S1', 'S2']
         S = {'0', '1'}  # S must be a list
         T = [
@@ -65,7 +65,7 @@ def test_init_2():
 
 
 def test_init_3():
-    with pytest.raises(fsmError):
+    with pytest.raises(FsmError):
         Q = ['S0', 'S1', 'S2']
         S = ['0', '1']
         T = [
@@ -79,7 +79,7 @@ def test_init_3():
 
 
 def test_init_4():
-    with pytest.raises(fsmError):
+    with pytest.raises(FsmError):
         Q = ['S0', 'S1', 'S2']
         S = ['0', '1']
         T = [
@@ -93,7 +93,7 @@ def test_init_4():
 
 
 def test_init_5():
-    with pytest.raises(fsmError):
+    with pytest.raises(FsmError):
         Q = [0, 1, 2, 3]
         S = ['a', 'b']
         T = [

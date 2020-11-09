@@ -10,7 +10,7 @@ from collections.abc import Iterable
 import pygraphviz as pgv
 
 from fsmdot.fsm import fsm
-from fsmdot.error import fsmError
+from fsmdot.error import FsmError
 
 
 class dfa(fsm):
@@ -32,7 +32,7 @@ class dfa(fsm):
         for i in T:
             for s in i:
                 if isinstance(s, Iterable) and not isinstance(s, str):
-                    raise fsmError(
+                    raise FsmError(
                         'The state-transition table is not deterministic'
                     )
         super().__init__(Q, S, T, q0, F)

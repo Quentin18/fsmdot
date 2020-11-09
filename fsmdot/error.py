@@ -6,6 +6,6 @@ Date: 2020
 """
 
 
-class fsmError(Exception):
+class FsmError(Exception):
     """Raises fsm exceptions."""
     pass
