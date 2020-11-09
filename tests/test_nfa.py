@@ -37,6 +37,11 @@ def a2():
     return nfa(Q, S, T, q0, F)
 
 
+def test_has_epsilon_moves(a1, a2):
+    assert not a1.has_epsilon_moves()
+    assert a2.has_epsilon_moves()
+
+
 def test_delta(a1, a2):
     assert a1.delta('p', '0') == {'p'}
     assert a1.delta('p', '1') == {'p', 'q'}
@@ -64,8 +69,8 @@ def test_accept(a1, a2):
     assert not a1.accept('11110')
     assert a1.accept('110110110101')
 
-    # assert a2.accept('1001')
-    # assert a2.accept('10101')
+    assert a2.accept('1001')
+    assert a2.accept('10101')
     assert not a2.accept('10')
     assert not a2.accept('01')
 

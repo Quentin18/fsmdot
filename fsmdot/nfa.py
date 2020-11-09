@@ -31,14 +31,26 @@ class nfa(fsm):
     """
     EPSILON = chr(949)
 
+    def has_epsilon_moves(self):
+        """Returns True if the NFA has epsilon-moves."""
+        return nfa.EPSILON in self._symbols
+
     def accept(self, string):
         """Returns True if the string is accepted by the NFA."""
-        current_states = {self._initial_state}
+        epsilon_nfa = self.has_epsilon_moves()
+        if epsilon_nfa:
+            current_states = self.epsilon_closure(self._initial_state)
+        else:
+            current_states = {self._initial_state}
         for symbol in string:
             new_states = set()
             for state in current_states:
                 t = self.delta(state, symbol)
-                new_states.update(t)
+                if epsilon_nfa:
+                    for s in t:
+                        new_states.update(self.epsilon_closure(s))
+                else:
+                    new_states.update(t)
             current_states = new_states
         return bool(current_states.intersection(self._final_states))
 
