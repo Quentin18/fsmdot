@@ -118,4 +118,8 @@ def test_to_dfa(a3, a4):
     assert dfa3.symbols == ['0', '1']
     assert len(dfa3.states) == 4
     assert dfa4.symbols == ['0', '1']
-    assert len(dfa4.states) == 16
+    assert len(dfa4.states) >= 16
+    assert a3.accept('011101100')
+    assert dfa3.accept('011101100')
+    assert a4.accept('1001011100')
+    assert dfa4.accept('1001011100')
