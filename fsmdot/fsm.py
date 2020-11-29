@@ -8,6 +8,8 @@ Date: 2020
 """
 from abc import ABC
 from tabulate import tabulate
+import pygraphviz as pgv
+from collections.abc import Iterable
 
 from fsmdot.error import FsmError
 
@@ -15,30 +17,23 @@ from fsmdot.error import FsmError
 class Fsm(ABC):
     """Represents a finite-state machine.
 
-    - Q is a list of states
-    - S is the input alphabet (a list of symbols)
-    - T is the state-transition table
-    - q0 is the initial state, an element of Q
+    - Q is a set of states
+    - S is a set of input symbols (alphabet)
+    - d is a dictionnary containing the transitions
+    - q0 is the initial state
     - F is the set of accept states
-
-    The order of states and symbols is important in Q and S
-    to make the state-transition table.
 
     See: https://en.wikipedia.org/wiki/Finite-state_machine
     """
-    def __init__(self, Q, S, T, q0, F):
-        if not isinstance(Q, list):
-            raise FsmError('Q must be a list')
-        if not isinstance(S, list):
-            raise FsmError('S must be a list')
+    def __init__(self, Q, S, d, q0, F):
         if q0 not in Q:
             raise FsmError('Q does not contain q0')
         F = set(F)
         if F.intersection(Q) != F:
             raise FsmError('Q does not contain all states of F')
-        self._states = Q
-        self._symbols = S
-        self._table = T
+        self._states = set(Q)
+        self._symbols = set(S)
+        self._transitions = d
         self._initial_state = q0
         self._final_states = F
 
@@ -53,9 +48,9 @@ class Fsm(ABC):
         return self._symbols
 
     @property
-    def table(self):
-        """Returns the state-transition table."""
-        return self._table
+    def transitions(self):
+        """Returns the transitions."""
+        return self._transitions
 
     @property
     def initial_state(self):
@@ -66,18 +61,6 @@ class Fsm(ABC):
     def final_states(self):
         """Returns the accept states."""
         return self._final_states
-
-    def _get_state_index(self, state):
-        """Returns the index of a state in the list."""
-        if state not in self._states:
-            raise FsmError('%s is not a state' % state)
-        return self._states.index(state)
-
-    def _get_symbol_index(self, symbol):
-        """Returns the index of a symbol in the list."""
-        if symbol not in self._symbols:
-            raise FsmError('%s is not a symbol' % symbol)
-        return self._symbols.index(symbol)
 
     def tabulate(self, tablefmt='grid'):
         """
@@ -92,19 +75,37 @@ class Fsm(ABC):
 
         See: https://github.com/astanin/python-tabulate
         """
-        states = []
-        for s in self._states:
-            state = str(s)
-            if s in self._final_states:
-                state = '* ' + state
-            if s == self._initial_state:
-                state = '-> ' + state
-            states.append(state)
+
+        # Create headers with symbols
+        headers = sorted(self._symbols)
+        # Create table and index
+        table, index = [], []
+        for state in sorted(self._states):
+            # Add line to table
+            if state in self._transitions:
+                line = []
+                for symbol in headers:
+                    if symbol in self._transitions[state]:
+                        line.append(str(self._transitions[state][symbol]))
+                    else:
+                        line.append('{}')
+                table.append(line)
+            else:
+                table.append(['{}'] * len(self._symbols))
+
+            # Add state to index
+            s = str(state)
+            if state in self._final_states:
+                s = '* ' + s
+            if state == self._initial_state:
+                s = '-> ' + s
+            index.append(s)
+
         return tabulate(
-            self._table,
-            headers=self._symbols,
+            table,
+            headers=headers,
             tablefmt=tablefmt,
-            showindex=states,
+            showindex=index,
             stralign='right'
         )
 
@@ -122,7 +123,57 @@ class Fsm(ABC):
         """
         State-transition function.
         It returns the next state from a state and a symbol.
+        It returns {} if there is no transition.
         """
-        i = self._get_state_index(state)
-        j = self._get_symbol_index(symbol)
-        return self._table[i][j]
+        if state not in self._states:
+            raise FsmError('%s is not a state' % state)
+        if symbol not in self._symbols:
+            raise FsmError('%s is not a symbol' % symbol)
+        if state in self._transitions and symbol in self._transitions[state]:
+            return self._transitions[state][symbol]
+        return {}
+
+    def dot_graph(self):
+        """
+        Returns the dot graph representing the automata.
+
+        It uses the pygraphviz library. The method returns an AGraph.
+        You can use the write method to write the dot graph to a file.
+
+        See: https://pygraphviz.github.io/
+        """
+        # Init graph
+        G = pgv.AGraph(
+            name='FSM', strict=True, directed=True
+        )
+        G.graph_attr['rankdir'] = 'LR'
+        G.node_attr['shape'] = 'circle'
+
+        # Init nodes
+        G.add_node('null', shape='point')
+        G.add_nodes_from(self._states)
+
+        # Initial state
+        G.add_edge('null', self._initial_state)
+
+        # Final states
+        G.add_nodes_from(self._final_states, shape='doublecircle')
+
+        # Transitions
+        for u in self._transitions:
+            for s in self._transitions[u]:
+                v = self._transitions[u][s]
+                if isinstance(v, Iterable) and not isinstance(v, str):
+                    for node in v:
+                        if G.has_edge(u, node):
+                            edge = G.get_edge(u, node)
+                            edge.attr['label'] += ', ' + str(s)
+                        else:
+                            G.add_edge(u, node, label=str(s))
+                else:
+                    if G.has_edge(u, v):
+                        edge = G.get_edge(u, v)
+                        edge.attr['label'] += ', ' + str(s)
+                    else:
+                        G.add_edge(u, v, label=str(s))
+        return G

@@ -6,8 +6,6 @@ See: https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton
 Author: Quentin Deschamps
 Date: 2020
 """
-import pygraphviz as pgv
-
 from fsmdot.fsm import Fsm
 from fsmdot.dfa import Dfa
 
@@ -16,14 +14,11 @@ class Nfa(Fsm):
     """
     Represents a nondeterministic finite automaton (NFA).
 
-    - Q is a list of states
-    - S is the input alphabet (a list of symbols)
-    - T is the state-transition table
-    - q0 is the initial state, an element of Q
+    - Q is a set of states
+    - S is a set of input symbols (alphabet)
+    - d is a dictionnary containing the transitions
+    - q0 is the initial state
     - F is the set of accept states
-
-    The order of states and symbols is important in Q and S
-    to make the state-transition table.
 
     You can add epsilon-moves using the Nfa.EPSILON character in S.
 
@@ -67,69 +62,29 @@ class Nfa(Fsm):
 
         See: https://en.wikipedia.org/wiki/Powerset_construction
         """
-        symbols = self._symbols.copy()
+        symbols = set(self._symbols)
         if self.has_epsilon_moves():
             symbols.remove(Nfa.EPSILON)
-        states = []
-        table = []
+        states = set()
+        transitions = dict()
         final_states = set()
         new_states = [self.epsilon_closure(self._initial_state)]
         initial_state = str(new_states[0])
         while new_states:
             state = new_states.pop()
-            states.append(str(state))
+            new_state = str(state)
+            states.add(new_state)
             if self._final_states.intersection(state):
-                final_states.add(str(state))
-            line = []
+                final_states.add(new_state)
+            transitions[new_state] = dict()
             for symbol in symbols:
                 t = set()
                 for s in state:
                     for i in self.delta(s, symbol):
                         t.update(self.epsilon_closure(i))
                 if t:
-                    line.append(str(t))
+                    transitions[new_state][symbol] = str(t)
                     if str(t) not in states and t not in new_states:
                         new_states.append(t)
-                else:
-                    line.append(None)
-            table.append(line)
 
-        return Dfa(states, symbols, table, initial_state, final_states)
-
-    def dot_graph(self):
-        """
-        Returns the dot graph representing the NFA.
-
-        It uses the pygraphviz library. The method returns an AGraph.
-        You can use the write method to write the dot graph to a file.
-
-        See: https://pygraphviz.github.io/
-        """
-        # Init graph
-        G = pgv.AGraph(
-            name='NFA', strict=True, directed=True
-        )
-        G.graph_attr['rankdir'] = 'LR'
-        G.node_attr['shape'] = 'circle'
-
-        # Init nodes
-        G.add_nodes_from(self._states)
-
-        # Initial state
-        G.add_node('null', shape='point')
-        G.add_edge('null', self._initial_state)
-
-        # Final states
-        G.add_nodes_from(self._final_states, shape='doublecircle')
-
-        # Transitions
-        for line, u in zip(self._table, self._states):
-            for states, symbol in zip(line, self._symbols):
-                for v in states:
-                    if G.has_edge(u, v):
-                        edge = G.get_edge(u, v)
-                        edge.attr['label'] += ', ' + symbol
-                    else:
-                        G.add_edge(u, v, label=symbol)
-
-        return G
+        return Dfa(states, symbols, transitions, initial_state, final_states)
