@@ -1,16 +1,16 @@
-strict digraph DFA {
+strict digraph FSM {
 	graph [rankdir=LR];
 	node [shape=circle];
-	"{1, 2, 3}"	[shape=doublecircle];
-	"{2, 4}"	[shape=doublecircle];
-	"{1, 2, 3}" -> "{2, 4}"	[label="0, 1"];
-	"{2, 4}" -> "{2, 4}"	[label=1];
-	"{2, 3}"	[shape=doublecircle];
-	"{2, 4}" -> "{2, 3}"	[label=0];
-	"{2, 3}" -> "{2, 4}"	[label=1];
-	"{4}"	[shape=doublecircle];
-	"{2, 3}" -> "{4}"	[label=0];
-	"{4}" -> "{2, 3}"	[label=0];
 	null	[shape=point];
+	"{1, 2, 3}"	[shape=doublecircle];
 	null -> "{1, 2, 3}";
+	"{4}"	[shape=doublecircle];
+	"{2, 3}"	[shape=doublecircle];
+	"{4}" -> "{2, 3}"	[label=0];
+	"{2, 4}"	[shape=doublecircle];
+	"{1, 2, 3}" -> "{2, 4}"	[label="1, 0"];
+	"{2, 4}" -> "{2, 4}"	[label=1];
+	"{2, 4}" -> "{2, 3}"	[label=0];
+	"{2, 3}" -> "{4}"	[label=0];
+	"{2, 3}" -> "{2, 4}"	[label=1];
 }

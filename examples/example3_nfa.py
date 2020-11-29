@@ -11,16 +11,18 @@ Source: https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton#Example
 """
 from fsmdot.nfa import Nfa
 
-Q = ['p', 'q']
-S = ['0', '1']
-T = [
-    [{'p'}, {'p', 'q'}],
-    [{}, {}]
-]
+Q = {'p', 'q'}
+S = {'0', '1'}
+d = {
+    'p': {
+        '0': {'p'},
+        '1': {'p', 'q'}
+    }
+}
 q0 = 'p'
 F = {'q'}
 
-a = Nfa(Q, S, T, q0, F)
+a = Nfa(Q, S, d, q0, F)
 a.print_table()
 
 print(a.accept('11110'))

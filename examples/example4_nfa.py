@@ -9,18 +9,28 @@ Graph: graph4_nfa.dot
 """
 from fsmdot.nfa import Nfa
 
-Q = [0, 1, 2, 3]
-S = ['a', 'b']
-T = [
-    [{0, 1}, {0}],
-    [{2}, {}],
-    [{3}, {}],
-    [{3}, {3}]
-]
+Q = {0, 1, 2, 3}
+S = {'a', 'b'}
+d = {
+    0: {
+        'a': {0, 1},
+        'b': {0}
+    },
+    1: {
+        'a': {2}
+    },
+    2: {
+        'a': {3}
+    },
+    3: {
+        'a': {3},
+        'b': {3}
+    }
+}
 q0 = 0
 F = {3}
 
-a = Nfa(Q, S, T, q0, F)
+a = Nfa(Q, S, d, q0, F)
 a.print_table()
 
 print(a.accept('ababaaabaaaaabababa'))

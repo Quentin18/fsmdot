@@ -14,18 +14,28 @@ Source: https://en.wikipedia.org/wiki/Powerset_construction#Example
 """
 from fsmdot.nfa import Nfa
 
-Q = [1, 2, 3, 4]
-S = [Nfa.EPSILON, '0', '1']
-T = [
-    [{3}, {2}, {}],
-    [{}, {}, {2, 4}],
-    [{2}, {4}, {}],
-    [{}, {3}, {}]
-]
+Q = {1, 2, 3, 4}
+S = {Nfa.EPSILON, '0', '1'}
+d = {
+    1: {
+        Nfa.EPSILON: {3},
+        '0': {2}
+    },
+    2: {
+        '1': {2, 4}
+    },
+    3: {
+        Nfa.EPSILON: {2},
+        '0': {4}
+    },
+    4: {
+        '0': {3}
+    }
+}
 q0 = 1
 F = {3, 4}
 
-a = Nfa(Q, S, T, q0, F)
+a = Nfa(Q, S, d, q0, F)
 a.print_table()
 
 G = a.dot_graph()

@@ -11,16 +11,22 @@ Source: https://en.wikipedia.org/wiki/Deterministic_finite_automaton#Example
 """
 from fsmdot.dfa import Dfa
 
-Q = ['S1', 'S2']
-S = ['0', '1']
-T = [
-    ['S2', 'S1'],
-    ['S1', 'S2']
-]
+Q = {'S1', 'S2'}
+S = {'0', '1'}
+d = {
+    'S1': {
+        '0': 'S2',
+        '1': 'S1'
+    },
+    'S2': {
+        '0': 'S1',
+        '1': 'S2'
+    }
+}
 q0 = 'S1'
 F = {'S1'}
 
-a = Dfa(Q, S, T, q0, F)
+a = Dfa(Q, S, d, q0, F)
 a.print_table()
 
 print(a.accept('11110'))

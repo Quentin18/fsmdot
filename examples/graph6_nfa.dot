@@ -1,6 +1,8 @@
-strict digraph NFA {
+strict digraph FSM {
 	graph [rankdir=LR];
 	node [shape=circle];
+	null	[shape=point];
+	null -> 1;
 	1 -> 2	[label=0];
 	3	[shape=doublecircle];
 	1 -> 3	[label=ε];
@@ -10,6 +12,4 @@ strict digraph NFA {
 	3 -> 2	[label=ε];
 	3 -> 4	[label=0];
 	4 -> 3	[label=0];
-	null	[shape=point];
-	null -> 1;
 }
