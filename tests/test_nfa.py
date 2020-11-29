@@ -10,62 +10,99 @@ from fsmdot.nfa import Nfa
 
 @pytest.fixture
 def a1():
-    Q = ['p', 'q']
-    S = ['0', '1']
-    T = [
-        [{'p'}, {'p', 'q'}],
-        [{}, {}]
-    ]
+    Q = {'p', 'q'}
+    S = {'0', '1'}
+    d = {
+        'p': {
+            '0': {'p'},
+            '1': {'p', 'q'}
+        }
+    }
     q0 = 'p'
     F = {'q'}
-    return Nfa(Q, S, T, q0, F)
+    return Nfa(Q, S, d, q0, F)
 
 
 @pytest.fixture
 def a2():
-    Q = ['S0', 'S1', 'S2', 'S3', 'S4']
-    S = ['0', '1', Nfa.EPSILON]
-    T = [
-        [{}, {}, {'S1', 'S3'}],
-        [{'S2'}, {'S1'}, {}],
-        [{'S1'}, {'S2'}, {}],
-        [{'S3'}, {'S4'}, {}],
-        [{'S4'}, {'S3'}, {}],
-    ]
+    Q = {'S0', 'S1', 'S2', 'S3', 'S4'}
+    S = {'0', '1', Nfa.EPSILON}
+    d = {
+        'S0': {
+            Nfa.EPSILON: {'S1', 'S3'}
+        },
+        'S1': {
+            '0': {'S2'},
+            '1': {'S1'}
+        },
+        'S2': {
+            '0': {'S1'},
+            '1': {'S2'}
+        },
+        'S3': {
+            '0': {'S3'},
+            '1': {'S4'}
+        },
+        'S4': {
+            '0': {'S4'},
+            '1': {'S3'}
+        }
+    }
     q0 = 'S0'
     F = {'S1', 'S3'}
-    return Nfa(Q, S, T, q0, F)
+    return Nfa(Q, S, d, q0, F)
 
 
 @pytest.fixture
 def a3():
-    Q = [1, 2, 3, 4]
-    S = [Nfa.EPSILON, '0', '1']
-    T = [
-        [{3}, {2}, {}],
-        [{}, {}, {2, 4}],
-        [{2}, {4}, {}],
-        [{}, {3}, {}]
-    ]
+    Q = {1, 2, 3, 4}
+    S = {Nfa.EPSILON, '0', '1'}
+    d = {
+        1: {
+            Nfa.EPSILON: {3},
+            '0': {2}
+        },
+        2: {
+            '1': {2, 4}
+        },
+        3: {
+            Nfa.EPSILON: {2},
+            '0': {4}
+        },
+        4: {
+            '0': {3}
+        }
+    }
     q0 = 1
     F = {3, 4}
-    return Nfa(Q, S, T, q0, F)
+    return Nfa(Q, S, d, q0, F)
 
 
 @pytest.fixture
 def a4():
-    Q = ['X', '0', '1', '2', '3']
-    S = ['0', '1']
-    T = [
-        [{'X'}, {'X', '0'}],
-        [{'1'}, {'1'}],
-        [{'2'}, {'2'}],
-        [{'3'}, {'3'}],
-        [{}, {}]
-    ]
+    Q = {'X', '0', '1', '2', '3'}
+    S = {'0', '1'}
+    d = {
+        'X': {
+            '0': {'X'},
+            '1': {'X', '0'}
+        },
+        '0': {
+            '0': {'1'},
+            '1': {'1'}
+        },
+        '1': {
+            '0': {'2'},
+            '1': {'2'}
+        },
+        '2': {
+            '0': {'3'},
+            '1': {'3'}
+        }
+    }
     q0 = 'X'
     F = {'3'}
-    return Nfa(Q, S, T, q0, F)
+    return Nfa(Q, S, d, q0, F)
 
 
 def test_has_epsilon_moves(a1, a2):
@@ -115,9 +152,9 @@ def test_epsilon_closure(a2):
 def test_to_dfa(a3, a4):
     dfa3 = a3.to_dfa()
     dfa4 = a4.to_dfa()
-    assert dfa3.symbols == ['0', '1']
+    assert dfa3.symbols == {'0', '1'}
     assert len(dfa3.states) == 4
-    assert dfa4.symbols == ['0', '1']
+    assert dfa4.symbols == {'0', '1'}
     assert len(dfa4.states) >= 16
     assert a3.accept('011101100')
     assert dfa3.accept('011101100')
