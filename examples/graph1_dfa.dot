@@ -4,8 +4,8 @@ strict digraph FSM {
 	null	[shape=point];
 	S1	[shape=doublecircle];
 	null -> S1;
-	S1 -> S1	[label=1];
-	S1 -> S2	[label=0];
-	S2 -> S1	[label=0];
 	S2 -> S2	[label=1];
+	S2 -> S1	[label=0];
+	S1 -> S2	[label=0];
+	S1 -> S1	[label=1];
 }
