@@ -57,6 +57,11 @@ class Nfa(Fsm):
         for s in self.delta(state, Nfa.EPSILON):
             self._recursive_closure(s, c)
 
+    @staticmethod
+    def _set_to_state(s):
+        """Transforms a set of states to a new state."""
+        return '{' + ', '.join(sorted(str(i) for i in s)) + '}'
+
     def to_dfa(self):
         """
         Returns the DFA corresponding to the NFA.
@@ -72,10 +77,10 @@ class Nfa(Fsm):
         transitions = dict()
         final_states = set()
         new_states = [self.epsilon_closure(self._initial_state)]
-        initial_state = str(new_states[0])
+        initial_state = Nfa._set_to_state(new_states[0])
         while new_states:
             state = new_states.pop()
-            new_state = str(state)
+            new_state = Nfa._set_to_state(state)
             states.add(new_state)
             if self._final_states.intersection(state):
                 final_states.add(new_state)
@@ -86,8 +91,9 @@ class Nfa(Fsm):
                     for i in self.delta(s, symbol):
                         t.update(self.epsilon_closure(i))
                 if t:
-                    transitions[new_state][symbol] = str(t)
-                    if str(t) not in states and t not in new_states:
+                    ns = Nfa._set_to_state(t)
+                    transitions[new_state][symbol] = ns
+                    if ns not in states and t not in new_states:
                         new_states.append(t)
 
         return Dfa(states, symbols, transitions, initial_state, final_states)
