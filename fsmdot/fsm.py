@@ -25,17 +25,55 @@ class Fsm(ABC):
 
     See: https://en.wikipedia.org/wiki/Finite-state_machine
     """
-    def __init__(self, Q, S, d, q0, F):
+    def __init__(self, Q, S, d, q0, F, is_deterministic):
         if q0 not in Q:
             raise FsmError('Q does not contain q0')
         F = set(F)
         if F.intersection(Q) != F:
             raise FsmError('Q does not contain all states of F')
+        Fsm._valid_transitions(Q, S, d, is_deterministic)
         self._states = set(Q)
         self._symbols = set(S)
         self._transitions = d
         self._initial_state = q0
         self._final_states = F
+
+    @staticmethod
+    def _valid_transitions(Q, S, d, is_deterministic):
+        """Raises an error if the dictionnary of transitions d is not valid"""
+        if not isinstance(d, dict):
+            raise FsmError('The transitions must be a dictionnay')
+        for state in d:
+            if state not in Q:
+                raise FsmError('%s is not in the set of states' % state)
+            if not isinstance(d[state], dict):
+                raise FsmError(
+                    'You must associate a dictionnary with the key %s' % state
+                )
+            for symbol in d[state]:
+                if symbol not in S:
+                    raise FsmError('%s is not in the set of symbols' % symbol)
+                t = d[state][symbol]
+                is_it = isinstance(t, Iterable) and not isinstance(t, str)
+                if is_deterministic:
+                    if is_it:
+                        raise FsmError(
+                            'The dictionnary is not deterministic'
+                        )
+                    if t not in Q:
+                        raise FsmError(
+                            '%s is not in the set of states' % t
+                        )
+                else:
+                    if not is_it:
+                        raise FsmError(
+                            'The dictionnary is not nondeterministic'
+                        )
+                    for s in t:
+                        if s not in Q:
+                            raise FsmError(
+                                '%s is not in the set of states' % t
+                            )
 
     @property
     def states(self):

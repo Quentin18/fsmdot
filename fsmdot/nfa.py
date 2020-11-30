@@ -26,6 +26,9 @@ class Nfa(Fsm):
     """
     EPSILON = chr(949)
 
+    def __init__(self, Q, S, d, q0, F):
+        super().__init__(Q, S, d, q0, F, False)
+
     def has_epsilon_moves(self):
         """Returns True if the NFA has epsilon-moves."""
         return Nfa.EPSILON in self._symbols

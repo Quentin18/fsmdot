@@ -25,14 +25,7 @@ class Dfa(Fsm):
     See: https://en.wikipedia.org/wiki/Deterministic_finite_automaton
     """
     def __init__(self, Q, S, d, q0, F):
-        for state in d:
-            for symb in d[state]:
-                t = d[state][symb]
-                if isinstance(t, Iterable) and not isinstance(t, str):
-                    raise FsmError(
-                        'The state-transition table is not deterministic'
-                    )
-        super().__init__(Q, S, d, q0, F)
+        super().__init__(Q, S, d, q0, F, True)
 
     def accept(self, string):
         """Returns True if the string is accepted by the DFA."""
