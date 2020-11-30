@@ -15,35 +15,38 @@ With the *fsmdot* library, you can create two different types of finite-state ma
 - **Nondeterministic finite automaton** (NFA)
 
 A finite-state machine is represented by a quintuple (Q, S, T, q0, F) where:
-- **Q** is a list of states
-- **S** is the input alphabet (a list of symbols)
-- **T** is the state-transition table
-- **q0** is the initial state, an element of Q
+- **Q** is a set of states
+- **S** is a set of input symbols (alphabet)
+- **d** is a dictionnary containing the transitions
+- **q0** is the initial state
 - **F** is the set of accept states
-
-The order of states and symbols is important in Q and S
-to make the state-transition table.
 
 ### Deterministic finite automaton
 This is how to create a deterministic finite automaton.
-- Fisrt, we import the **Dfa** class:
+- First, we import the **Dfa** class:
 ```python
-from fsmdot.dfa import dfa
+from fsmdot.dfa import Dfa
 ```
-- Create the list of states:
+- Create the set of states:
 ```python
-Q = ['S1', 'S2']
+Q = {'S1', 'S2'}
 ```
-- Create the list of symbols representing the input alphabet:
+- Create the set of symbols representing the input alphabet:
 ```python
-S = ['0', '1']
+S = {'0', '1'}
 ```
-- Create the state-transition table. The rows corresponds to states (in the same order than in the Q list) and the columns corresponds to the symbols (in the same order than in the S list):
+- Create the transitions as a dictionnary.
 ```python
-T = [
-    ['S2', 'S1'],
-    ['S1', 'S2']
-]
+d = {
+    'S1': {
+        '0': 'S2',
+        '1': 'S1'
+    },
+    'S2': {
+        '0': 'S1',
+        '1': 'S2'
+    }
+}
 ```
 - Create the initial state (the state must be in Q):
 ```python
@@ -55,7 +58,7 @@ F = {'S1'}
 ```
 - Then, you can create the DFA:
 ```python
-a = Dfa(Q, S, T, q0, F)
+a = Dfa(Q, S, d, q0, F)
 ```
 - To see the state-transition table, use the **print_table** method:
 ```python
@@ -92,16 +95,16 @@ G.write('graph1_dfa.dot')
 ```
 Result:
 ```
-strict digraph DFA {
-        graph [rankdir=LR];
-        node [shape=circle];
-        S1      [shape=doublecircle];
-        S1 -> S1        [label=1];
-        S1 -> S2        [label=0];
-        S2 -> S1        [label=0];
-        S2 -> S2        [label=1];
-        null    [shape=point];
-        null -> S1;
+strict digraph FSM {
+	graph [rankdir=LR];
+	node [shape=circle];
+	null	[shape=point];
+	S1	[shape=doublecircle];
+	null -> S1;
+	S1 -> S1	[label=1];
+	S1 -> S2	[label=0];
+	S2 -> S1	[label=0];
+	S2 -> S2	[label=1];
 }
 ```
 File *graph1_dfa.dot*:
@@ -113,32 +116,40 @@ Example:
 ```python
 from fsmdot.nfa import Nfa
 
-Q = [1, 2, 3, 4]
-S = [Nfa.EPSILON, '0', '1']
-T = [
-    [{3}, {2}, {}],
-    [{}, {}, {2, 4}],
-    [{2}, {4}, {}],
-    [{}, {3}, {}]
-]
-q0 = 1
-F = {3, 4}
+Q = {'S0', 'S1', 'S2', 'S3', 'S4'}
+S = {'0', '1', Nfa.EPSILON}
+d = {
+    'S0': {
+        Nfa.EPSILON: {'S1', 'S3'}
+    },
+    'S1': {
+        '0': {'S2'},
+        '1': {'S1'}
+    },
+    'S2': {
+        '0': {'S1'},
+        '1': {'S2'}
+    },
+    'S3': {
+        '0': {'S3'},
+        '1': {'S4'}
+    },
+    'S4': {
+        '0': {'S4'},
+        '1': {'S3'}
+    }
+}
+q0 = 'S0'
+F = {'S1', 'S3'}
 
-a = Nfa(Q, S, T, q0, F)
+a = Nfa(Q, S, d, q0, F)
 a.print_table()
 
+for string in ['1001', '10101', '10', '01']:
+    print(a.accept(string))
+
 G = a.dot_graph()
-G.write('graph6_nfa.dot')
-
-# Calculations of epsilon closure
-for state in Q:
-    print(state, a.epsilon_closure(state))
-
-# Conversion to DFA
-dfa = a.to_dfa()
-dfa.print_table()
-G2 = dfa.dot_graph()
-G2.write('graph6_dfa.dot')
+G.write('graph5_nfa.dot')
 ```
 
 ## Examples
