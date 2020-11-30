@@ -37,6 +37,7 @@ class Fsm(ABC):
         self._transitions = d
         self._initial_state = q0
         self._final_states = F
+        self._is_deterministic = is_deterministic
 
     @staticmethod
     def _valid_transitions(Q, S, d, is_deterministic):
@@ -169,7 +170,7 @@ class Fsm(ABC):
             raise FsmError('%s is not a symbol' % symbol)
         if state in self._transitions and symbol in self._transitions[state]:
             return self._transitions[state][symbol]
-        return {}
+        return None if self._is_deterministic else {}
 
     def dot_graph(self):
         """

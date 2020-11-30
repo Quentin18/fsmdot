@@ -6,10 +6,7 @@ See: https://en.wikipedia.org/wiki/Deterministic_finite_automaton
 Author: Quentin Deschamps
 Date: 2020
 """
-from collections.abc import Iterable
-
 from fsmdot.fsm import Fsm
-from fsmdot.error import FsmError
 
 
 class Dfa(Fsm):
