@@ -112,45 +112,96 @@ File *graph1_dfa.dot*:
 ![Graph 1](./img/graph1.svg)
 
 ### Nondeterministic finite automaton
+You can also create nondeterministic finite automatons using the **Nfa** class.
+- To add epsilon-moves, use the symbol **Nfa.EPSILON**.
+
 Example:
 ```python
 from fsmdot.nfa import Nfa
 
-Q = {'S0', 'S1', 'S2', 'S3', 'S4'}
-S = {'0', '1', Nfa.EPSILON}
+Q = {1, 2, 3, 4}
+S = {Nfa.EPSILON, '0', '1'}
 d = {
-    'S0': {
-        Nfa.EPSILON: {'S1', 'S3'}
+    1: {
+        Nfa.EPSILON: {3},
+        '0': {2}
     },
-    'S1': {
-        '0': {'S2'},
-        '1': {'S1'}
+    2: {
+        '1': {2, 4}
     },
-    'S2': {
-        '0': {'S1'},
-        '1': {'S2'}
+    3: {
+        Nfa.EPSILON: {2},
+        '0': {4}
     },
-    'S3': {
-        '0': {'S3'},
-        '1': {'S4'}
-    },
-    'S4': {
-        '0': {'S4'},
-        '1': {'S3'}
+    4: {
+        '0': {3}
     }
 }
-q0 = 'S0'
-F = {'S1', 'S3'}
+q0 = 1
+F = {3, 4}
 
 a = Nfa(Q, S, d, q0, F)
 a.print_table()
 
-for string in ['1001', '10101', '10', '01']:
-    print(a.accept(string))
-
 G = a.dot_graph()
-G.write('graph5_nfa.dot')
+G.write('graph6_nfa.dot')
 ```
+State-transition table:
+```
++------+-----+--------+-----+
+|      |   0 |      1 |   ε |
++======+=====+========+=====+
+| -> 1 | {2} |     {} | {3} |
++------+-----+--------+-----+
+|    2 |  {} | {2, 4} |  {} |
++------+-----+--------+-----+
+|  * 3 | {4} |     {} | {2} |
++------+-----+--------+-----+
+|  * 4 | {3} |     {} |  {} |
++------+-----+--------+-----+
+```
+File *graph6_nfa.dot*:
+
+![Graph 6 NFA](./img/graph6_nfa.svg)
+
+- To calculate the epsilon closure of a state, use the **epsilon_closure** method.
+```python
+# Calculations of epsilon closure
+for state in Q:
+    print(state, a.epsilon_closure(state))
+```
+Result:
+```
+1 {1, 2, 3}
+2 {2}
+3 {2, 3}
+4 {4}
+```
+- To convert a NFA to a DFA, use the **to_dfa** method. It uses the powerset construction.
+```python
+# Conversion to DFA
+dfa = a.to_dfa()
+dfa.print_table()
+G2 = dfa.dot_graph()
+G2.write('graph6_dfa.dot')
+```
+State-transition table of dfa:
+```
++----------------+--------+--------+
+|                |      0 |      1 |
++================+========+========+
+| -> * {1, 2, 3} | {2, 4} | {2, 4} |
++----------------+--------+--------+
+|       * {2, 3} |    {4} | {2, 4} |
++----------------+--------+--------+
+|       * {2, 4} | {2, 3} | {2, 4} |
++----------------+--------+--------+
+|          * {4} | {2, 3} |     {} |
++----------------+--------+--------+
+```
+File *graph6_dfa.dot*:
+
+![Graph 6 NFA](./img/graph6_dfa.svg)
 
 ## Examples
 To see how the library works, look at the examples in the *examples* folder.
