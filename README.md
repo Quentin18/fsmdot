@@ -1,5 +1,10 @@
 # Finite-state machines with dot
 
+[![Build Status](https://travis-ci.org/Quentin18/fsmdot.svg?branch=master)](https://travis-ci.org/Quentin18/fsmdot)
+![PyPI](https://img.shields.io/pypi/v/fsmdot)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/fsmdot)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **fsmdot** is a Python package to create finite-state machines which can be exported to dot format. It uses the [pygraphviz](https://pygraphviz.github.io/) library which is a Python interface to the [Graphviz](https://graphviz.org/) graph layout and visualization package.
 
 ## Installing
